@@ -78,7 +78,7 @@ UART0 (PA1, PA0) sends data to the PC via the USB debug cable, 115200 baud rate
 Port A, SSI0 (PA2, PA3, PA5, PA6, PA7) sends data to Nokia5110 LCD
 
 */
-#include "/CC3100/simplelink/include/simplelink.h"
+#include "..\cc3100\simplelink\include\simplelink.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "driverlib/debug.h"
@@ -94,7 +94,8 @@ Port A, SSI0 (PA2, PA3, PA5, PA6, PA7) sends data to Nokia5110 LCD
 #include "LED.h"
 #include "Nokia5110.h"
 #include <string.h>
-
+#include "ADC.h"
+#include "../inc/tm4c123gh6pm.h"
 #define SSID_NAME  "valvanoAP" /* Access point name to connect to */
 #define SEC_TYPE   SL_SEC_TYPE_WPA
 #define PASSKEY    "12345678"  /* Password in case of secure AP */ 
@@ -228,7 +229,7 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
   }
   UARTprintf("Connected\n");
   while(1){
-    strcpy(HostName,"api.openweathermap.org");
+    strcpy(HostName,"openweathermap.org");
     retVal = sl_NetAppDnsGetHostByName(HostName,
              strlen(HostName),&DestinationIP, SL_AF_INET);
     if(retVal == 0){

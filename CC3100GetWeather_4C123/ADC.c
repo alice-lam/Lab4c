@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "../inc/tm4c123gh6pm.h"
+
 #define PF2             (*((volatile uint32_t *)0x40025010))
 #define PF1             (*((volatile uint32_t *)0x40025008))
 void DisableInterrupts(void); // Disable interrupts
@@ -94,13 +95,14 @@ volatile uint32_t ADCvalue;
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
 void Timer0A_Init100HzInt(void){
   volatile uint32_t delay;
-  DisableInterrupts();
+ // DisableInterrupts();
   // **** general initialization ****
   SYSCTL_RCGCTIMER_R |= 0x01;      // activate timer0
   delay = SYSCTL_RCGCTIMER_R;      // allow time to finish activating
   TIMER0_CTL_R &= ~TIMER_CTL_TAEN; // disable timer0A during setup
   TIMER0_CFG_R = 0;                // configure for 32-bit timer mode
   // **** timer0A initialization ****
+	
                                    // configure for periodic mode
   TIMER0_TAMR_R = TIMER_TAMR_TAMR_PERIOD;
   TIMER0_TAILR_R = 799999;         // start value for 100 Hz interrupts
