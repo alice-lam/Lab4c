@@ -78,7 +78,7 @@ UART0 (PA1, PA0) sends data to the PC via the USB debug cable, 115200 baud rate
 Port A, SSI0 (PA2, PA3, PA5, PA6, PA7) sends data to Nokia5110 LCD
 
 */
-#include "..\cc3100\simplelink\include\simplelink.h"
+#include "/CC3100/simplelink/include/simplelink.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "driverlib/debug.h"
