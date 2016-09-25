@@ -101,6 +101,57 @@ Port A, SSI0 (PA2, PA3, PA5, PA6, PA7) sends data to Nokia5110 LCD
 #define PASSKEY    "12345678"  /* Password in case of secure AP */ 
 
 #define BAUD_RATE   115200
+
+#define MAX_RECV_BUFF_SIZE  1024
+#define MAX_SEND_BUFF_SIZE  512
+#define MAX_HOSTNAME_SIZE   40
+#define MAX_PASSKEY_SIZE    32
+#define MAX_SSID_SIZE       32
+#define MAX_TEMP_LENGTH 10
+
+int32_t strequal(const char *str1, const char *str2, uint32_t length) {
+	for(uint32_t i = 0; i < length; i += 1) {
+		if(str1[i] != str2[i])
+			return 0;
+	}
+	return 1;
+}
+
+// null terminated buffer for temperature extraction
+const char temperature_buffer[MAX_TEMP_LENGTH+1];
+const char formatted_temperature_buffer[MAX_TEMP_LENGTH+1+9];
+
+char* Extract_Temperature(char *received_data) {
+	const char *tempMatch = "\"temp\":"; 
+	//UARTprintf("%s", "tempmatch=");
+	//UARTprintf("%c", tempMatch);
+	//UARTprintf("%c", '\n');
+	
+	const int tempLength = 7;
+	const char comparison;
+	int32_t index = -1;
+	
+	// find index of temperature string
+	for(uint32_t i = 0; i < MAX_RECV_BUFF_SIZE; i += 1) {
+		
+		if(strequal(tempMatch, &received_data[i], tempLength)) {
+			
+			index = i + tempLength;
+			break;
+		}
+	}
+	
+	//copy temperature value part out
+	char *temperatureString = &received_data[index];
+	uint32_t j;
+	for(j = 0; j < MAX_TEMP_LENGTH && received_data[j + index] != ','; j += 1) {
+		temperatureString[j] = received_data[j + index];
+	}
+	temperatureString[j] = '\0';
+	UARTprintf("%s", temperatureString);
+	return temperatureString;
+	
+}
 void UART_Init(void){
   SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -211,7 +262,8 @@ void Crash(uint32_t time){
 // 2) Register on the Sign up page
 // 3) get an API key (APPID) replace the 1234567890abcdef1234567890abcdef with your APPID
 int main(void){int32_t retVal;  SlSecParams_t secParams;
-  char *pConfig = NULL; INT32 ASize = 0; SlSockAddrIn_t  Addr;
+  int ret;
+	char *pConfig = NULL; INT32 ASize = 0; SlSockAddrIn_t  Addr;
   initClk();        // PLL 50 MHz
   UART_Init();      // Send data to PC, 115200 bps
   LED_Init();       // initialize LaunchPad I/O 
@@ -230,9 +282,10 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
   UARTprintf("Connected\n");
   while(1){
     strcpy(HostName,"api.openweathermap.org");
-    retVal = sl_NetAppDnsGetHostByName(HostName,
+    ret=retVal = sl_NetAppDnsGetHostByName(HostName,
              strlen(HostName),&DestinationIP, SL_AF_INET);
-    if(retVal == 0){
+    UARTprintf("%d", ret);
+		if(retVal == 0){
       Addr.sin_family = SL_AF_INET;
       Addr.sin_port = sl_Htons(80);
       Addr.sin_addr.s_addr = sl_Htonl(DestinationIP);// IP to big endian 
@@ -250,6 +303,7 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
         UARTprintf("\r\n\r\n");
         UARTprintf(Recvbuff);  UARTprintf("\r\n");
       }
+			Extract_Temperature(Recvbuff);
     }
     while(Board_Input()==0){}; // wait for touch
     LED_GreenOff();
