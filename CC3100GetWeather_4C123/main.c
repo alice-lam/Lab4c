@@ -96,8 +96,8 @@ Port A, SSI0 (PA2, PA3, PA5, PA6, PA7) sends data to Nokia5110 LCD
 #include <string.h>
 #include "ADC.h"
 #include "../inc/tm4c123gh6pm.h"
-#define SSID_NAME  "valvanoAP" /* Access point name to connect to */
-#define SEC_TYPE   SL_SEC_TYPE_WPA
+#define SSID_NAME  "labfour" /* Access point name to connect to */
+#define SEC_TYPE   SL_SEC_TYPE_OPEN
 #define PASSKEY    "12345678"  /* Password in case of secure AP */ 
 
 #define BAUD_RATE   115200
@@ -206,7 +206,7 @@ void Crash(uint32_t time){
  */
 // 1) change Austin Texas to your city
 // 2) you can change metric to imperial if you want temperature in F
-#define REQUEST "GET /data/2.5/weather?q=Austin%20Texas&APPID=1234567890abcdef1234567890abcdef&units=metric HTTP/1.1\r\nUser-Agent: Keil\r\nHost:api.openweathermap.org\r\nAccept: */*\r\n\r\n"
+#define REQUEST "GET /data/2.5/weather?q=Austin%20Texas&APPID=e5a0ebb97b8683a29b45d1d0c6bad241&units=metric HTTP/1.1\r\nUser-Agent: Keil\r\nHost:api.openweathermap.org\r\nAccept: */*\r\n\r\n"
 // 1) go to http://openweathermap.org/appid#use 
 // 2) Register on the Sign up page
 // 3) get an API key (APPID) replace the 1234567890abcdef1234567890abcdef with your APPID
@@ -229,7 +229,7 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
   }
   UARTprintf("Connected\n");
   while(1){
-    strcpy(HostName,"openweathermap.org");
+    strcpy(HostName,"api.openweathermap.org");
     retVal = sl_NetAppDnsGetHostByName(HostName,
              strlen(HostName),&DestinationIP, SL_AF_INET);
     if(retVal == 0){
