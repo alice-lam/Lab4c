@@ -148,6 +148,7 @@ char* Extract_Temperature(char *received_data) {
 		temperatureString[j] = received_data[j + index];
 	}
 	temperatureString[j] = '\0';
+	
 	UARTprintf("%s", temperatureString);
 	return temperatureString;
 	
